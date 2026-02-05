@@ -9,7 +9,9 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+  // Handle login
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent form reload on Enter
     try {
       setLoading(true);
       setError("");
@@ -27,7 +29,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <div className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md">
+      <form
+        onSubmit={handleLogin} // submit on Enter key
+        className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md"
+      >
         {/* CryptoNest Branding */}
         <h1 className="text-green-400 text-3xl sm:text-4xl font-bold text-center mb-2">
           CryptoNest
@@ -42,6 +47,7 @@ export default function Login() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         {/* Password Input */}
@@ -51,11 +57,12 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
 
         {/* Login Button */}
         <button
-          onClick={handleLogin}
+          type="submit"
           disabled={loading}
           className="w-full bg-green-500 hover:bg-green-600 text-black py-3 rounded font-semibold text-sm sm:text-base disabled:opacity-50 transition-colors"
         >
@@ -64,7 +71,19 @@ export default function Login() {
 
         {/* Error Message */}
         {error && <p className="text-red-500 mt-4 text-center text-sm sm:text-base">{error}</p>}
-      </div>
+
+        {/* Signup Link */}
+        <p className="mt-4 text-center text-sm text-gray-400">
+          Don’t have an account?{" "}
+          <button
+            type="button"
+            onClick={() => router.push("/signup")}
+            className="text-green-500 hover:underline"
+          >
+            Sign Up
+          </button>
+        </p>
+      </form>
     </div>
   );
 }
