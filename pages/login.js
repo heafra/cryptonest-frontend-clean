@@ -15,11 +15,12 @@ export default function Login() {
       setLoading(true);
       setError("");
 
-      const res = await axiosClient.post("/auth/login", { email, password });
+      const res = await axiosClient.post("/api/auth/login", {
+        email,
+        password,
+      });
 
-      // Store user info only in localStorage
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
       router.replace("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -83,5 +84,6 @@ export default function Login() {
     </div>
   );
 }
+
 
 

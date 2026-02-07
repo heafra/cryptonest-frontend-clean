@@ -15,15 +15,17 @@ export default function Signup() {
       setLoading(true);
       setError("");
 
-      // Signup
-      await axiosClient.post("/auth/signup", { email, password });
+      await axiosClient.post("/api/auth/signup", {
+        email,
+        password,
+      });
 
-      // Auto-login
-      const res = await axiosClient.post("/auth/login", { email, password });
+      const res = await axiosClient.post("/api/auth/login", {
+        email,
+        password,
+      });
 
-      // Store user info only in localStorage
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
       router.replace("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Signup failed");
@@ -34,7 +36,10 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <form className="bg-gray-900 p-8 rounded-lg w-full max-w-md" onSubmit={handleSignup}>
+      <form
+        className="bg-gray-900 p-8 rounded-lg w-full max-w-md"
+        onSubmit={handleSignup}
+      >
         <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
 
         {error && <p className="text-red-500 mb-3">{error}</p>}
@@ -68,5 +73,6 @@ export default function Signup() {
     </div>
   );
 }
+
 
 
