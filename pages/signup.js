@@ -9,20 +9,21 @@ export default function Signup() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Handle signup + auto-login
   const handleSignup = async (e) => {
-    e.preventDefault(); // Prevent form reload
+    e.preventDefault();
     try {
       setLoading(true);
       setError("");
 
-      // 1️⃣ Call backend signup
+      // 1️⃣ Signup
       await axiosClient.post("/auth/signup", { email, password });
 
-      // 2️⃣ Auto-login after signup
-      await axiosClient.post("/auth/login", { email, password }, { withCredentials: true });
+      // 2️⃣ Auto-login
+      const res = await axiosClient.post("/auth/login", { email, password });
 
-      // Redirect to dashboard
+      // ✅ Store JWT in localStorage
+      localStorage.setItem("token", res.data.token);
+
       router.replace("/dashboard");
     } catch (err) {
       console.error(err);
@@ -34,10 +35,7 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <form
-        onSubmit={handleSignup}
-        className="bg-gray-900 p-8 rounded-lg w-full max-w-md"
-      >
+      <form onSubmit={handleSignup} className="bg-gray-900 p-8 rounded-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
 
         {error && <p className="text-red-500 mb-3">{error}</p>}

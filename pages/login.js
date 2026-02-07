@@ -9,16 +9,17 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Handle login
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent form reload on Enter
+    e.preventDefault();
     try {
       setLoading(true);
       setError("");
 
-      await axiosClient.post("/auth/login", { email, password });
+      const res = await axiosClient.post("/auth/login", { email, password });
 
-      // ✅ Cookie is now set
+      // ✅ Store JWT in localStorage
+      localStorage.setItem("token", res.data.token);
+
       router.replace("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -29,19 +30,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <form
-        onSubmit={handleLogin} // submit on Enter key
-        className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md"
-      >
-        {/* CryptoNest Branding */}
-        <h1 className="text-green-400 text-3xl sm:text-4xl font-bold text-center mb-2">
-          CryptoNest
-        </h1>
-        <p className="text-gray-400 text-center text-sm sm:text-base mb-6">
-          Secure Investment Platform
-        </p>
+      <form onSubmit={handleLogin} className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md">
+        <h1 className="text-green-400 text-3xl sm:text-4xl font-bold text-center mb-2">CryptoNest</h1>
+        <p className="text-gray-400 text-center text-sm sm:text-base mb-6">Secure Investment Platform</p>
 
-        {/* Email Input */}
         <input
           className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white text-sm sm:text-base focus:outline-none focus:border-green-500"
           placeholder="Email"
@@ -50,7 +42,6 @@ export default function Login() {
           required
         />
 
-        {/* Password Input */}
         <input
           type="password"
           className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white text-sm sm:text-base focus:outline-none focus:border-green-500"
@@ -60,7 +51,6 @@ export default function Login() {
           required
         />
 
-        {/* Login Button */}
         <button
           type="submit"
           disabled={loading}
@@ -69,10 +59,8 @@ export default function Login() {
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {/* Error Message */}
         {error && <p className="text-red-500 mt-4 text-center text-sm sm:text-base">{error}</p>}
 
-        {/* Signup Link */}
         <p className="mt-4 text-center text-sm text-gray-400">
           Don’t have an account?{" "}
           <button
