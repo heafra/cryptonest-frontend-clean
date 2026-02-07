@@ -15,18 +15,17 @@ export default function Signup() {
       setLoading(true);
       setError("");
 
-      // 1️⃣ Signup
+      // Signup
       await axiosClient.post("/auth/signup", { email, password });
 
-      // 2️⃣ Auto-login
+      // Auto-login
       const res = await axiosClient.post("/auth/login", { email, password });
 
-      // ✅ Store JWT in localStorage
-      localStorage.setItem("token", res.data.token);
+      // Store user info only in localStorage
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
       router.replace("/dashboard");
     } catch (err) {
-      console.error(err);
       setError(err.response?.data?.error || "Signup failed");
     } finally {
       setLoading(false);
@@ -35,7 +34,7 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <form onSubmit={handleSignup} className="bg-gray-900 p-8 rounded-lg w-full max-w-md">
+      <form className="bg-gray-900 p-8 rounded-lg w-full max-w-md" onSubmit={handleSignup}>
         <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
 
         {error && <p className="text-red-500 mb-3">{error}</p>}
@@ -69,3 +68,5 @@ export default function Signup() {
     </div>
   );
 }
+
+

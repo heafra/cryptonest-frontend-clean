@@ -17,8 +17,8 @@ export default function Login() {
 
       const res = await axiosClient.post("/auth/login", { email, password });
 
-      // ✅ Store JWT in localStorage
-      localStorage.setItem("token", res.data.token);
+      // Store user info only in localStorage
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
       router.replace("/dashboard");
     } catch (err) {
@@ -30,36 +30,44 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <form onSubmit={handleLogin} className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md">
-        <h1 className="text-green-400 text-3xl sm:text-4xl font-bold text-center mb-2">CryptoNest</h1>
-        <p className="text-gray-400 text-center text-sm sm:text-base mb-6">Secure Investment Platform</p>
+      <form
+        onSubmit={handleLogin}
+        className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md"
+      >
+        <h1 className="text-green-400 text-3xl sm:text-4xl font-bold text-center mb-2">
+          CryptoNest
+        </h1>
+        <p className="text-gray-400 text-center text-sm sm:text-base mb-6">
+          Secure Investment Platform
+        </p>
 
         <input
-          className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white text-sm sm:text-base focus:outline-none focus:border-green-500"
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white"
         />
 
         <input
           type="password"
-          className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white text-sm sm:text-base focus:outline-none focus:border-green-500"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white"
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-600 text-black py-3 rounded font-semibold text-sm sm:text-base disabled:opacity-50 transition-colors"
+          className="w-full bg-green-500 hover:bg-green-600 text-black py-3 rounded font-semibold disabled:opacity-50"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {error && <p className="text-red-500 mt-4 text-center text-sm sm:text-base">{error}</p>}
+        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
         <p className="mt-4 text-center text-sm text-gray-400">
           Don’t have an account?{" "}
@@ -75,3 +83,5 @@ export default function Login() {
     </div>
   );
 }
+
+
