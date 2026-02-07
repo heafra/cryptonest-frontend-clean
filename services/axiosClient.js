@@ -4,9 +4,9 @@ import axios from "axios";
 
 const axiosClient = axios.create({
 
-  baseURL: "https://api.cryptonep.com/api", // adjust if needed
+  baseURL: "https://api.cryptonep.com", // ✅ FIXED
 
-  withCredentials: true, // send cookies
+  withCredentials: true,
 
   headers: {
 
@@ -26,11 +26,9 @@ axiosClient.interceptors.request.use(
 
     console.log("➡️ Axios Request:", {
 
-      url: config.url,
+      fullURL: `${config.baseURL}${config.url}`, // 👈 helpful
 
       method: config.method,
-
-      headers: config.headers,
 
       data: config.data,
 
@@ -74,7 +72,13 @@ axiosClient.interceptors.response.use(
 
   (error) => {
 
-    console.error("❌ Axios Response Error:", error.response?.data || error.message);
+    console.error(
+
+      "❌ Axios Response Error:",
+
+      error.response?.data || error.message
+
+    );
 
     return Promise.reject(error);
 
@@ -85,4 +89,3 @@ axiosClient.interceptors.response.use(
 
 
 export default axiosClient;
-
