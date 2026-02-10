@@ -4,9 +4,11 @@ import axios from "axios";
 
 const axiosClient = axios.create({
 
-  baseURL: "https://api.cryptonep.com", // ✅ FIXED
+  baseURL:
 
-  withCredentials: true,
+    process.env.NEXT_PUBLIC_API_URL || "https://api.cryptonep.com",
+
+  withCredentials: true, // 🔑 REQUIRED for auth cookies
 
   headers: {
 
@@ -14,11 +16,17 @@ const axiosClient = axios.create({
 
   },
 
+  timeout: 15000, // prevents hanging requests
+
 });
 
 
 
-// REQUEST LOGGING
+/* ======================
+
+   REQUEST LOGGING
+
+====================== */
 
 axiosClient.interceptors.request.use(
 
@@ -26,13 +34,17 @@ axiosClient.interceptors.request.use(
 
     console.log("➡️ Axios Request:", {
 
-      fullURL: `${config.baseURL}${config.url}`, // 👈 helpful
+      fullURL: `${config.baseURL}${config.url}`,
 
-      method: config.method,
+      method: config.method?.toUpperCase(),
 
       data: config.data,
 
+      withCredentials: config.withCredentials,
+
     });
+
+
 
     return config;
 
@@ -50,7 +62,11 @@ axiosClient.interceptors.request.use(
 
 
 
-// RESPONSE LOGGING
+/* ======================
+
+   RESPONSE LOGGING
+
+====================== */
 
 axiosClient.interceptors.response.use(
 
@@ -66,19 +82,25 @@ axiosClient.interceptors.response.use(
 
     });
 
+
+
     return response;
 
   },
 
   (error) => {
 
-    console.error(
+    console.error("❌ Axios Response Error:", {
 
-      "❌ Axios Response Error:",
+      url: error.config?.url,
 
-      error.response?.data || error.message
+      status: error.response?.status,
 
-    );
+      data: error.response?.data,
+
+    });
+
+
 
     return Promise.reject(error);
 
@@ -89,3 +111,6 @@ axiosClient.interceptors.response.use(
 
 
 export default axiosClient;
+
+
+

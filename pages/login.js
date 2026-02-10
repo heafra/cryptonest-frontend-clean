@@ -15,12 +15,13 @@ export default function Login() {
       setLoading(true);
       setError("");
 
-      const res = await axiosClient.post("/api/auth/login", {
+      // 🔑 FIX: no /api here
+      await axiosClient.post("/auth/login", {
         email,
-        password,
+        password
       });
 
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // cookie is set by backend
       router.replace("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -35,12 +36,9 @@ export default function Login() {
         onSubmit={handleLogin}
         className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md"
       >
-        <h1 className="text-green-400 text-3xl sm:text-4xl font-bold text-center mb-2">
+        <h1 className="text-green-400 text-3xl font-bold text-center mb-2">
           CryptoNest
         </h1>
-        <p className="text-gray-400 text-center text-sm sm:text-base mb-6">
-          Secure Investment Platform
-        </p>
 
         <input
           type="email"
@@ -63,27 +61,15 @@ export default function Login() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-600 text-black py-3 rounded font-semibold disabled:opacity-50"
+          className="w-full bg-green-500 text-black py-3 rounded font-semibold"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-
-        <p className="mt-4 text-center text-sm text-gray-400">
-          Don’t have an account?{" "}
-          <button
-            type="button"
-            onClick={() => router.push("/signup")}
-            className="text-green-500 hover:underline"
-          >
-            Sign Up
-          </button>
-        </p>
+        {error && (
+          <p className="text-red-500 mt-4 text-center">{error}</p>
+        )}
       </form>
     </div>
   );
 }
-
-
-
