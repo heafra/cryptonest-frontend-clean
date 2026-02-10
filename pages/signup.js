@@ -1,31 +1,37 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import axiosClient from "../services/axiosClient";
 
 export default function Signup() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
 
-      await axiosClient.post("/api/auth/signup", {
+      const res = await axiosClient.post("/auth/signup", {
         email,
         password,
       });
 
-      const res = await axiosClient.post("/api/auth/login", {
-        email,
-        password,
-      });
-
+      // Save user to local storage
       localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // Redirect to dashboard
       router.replace("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Signup failed");
@@ -35,14 +41,18 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <form
-        className="bg-gray-900 p-8 rounded-lg w-full max-w-md"
         onSubmit={handleSignup}
+        className="bg-gray-900 p-8 sm:p-12 rounded-xl w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+        <h1 className="text-green-400 text-3xl font-bold text-center mb-2">
+          CryptoNest
+        </h1>
 
-        {error && <p className="text-red-500 mb-3">{error}</p>}
+        <p className="text-gray-400 text-center mb-6">
+          Create your account
+        </p>
 
         <input
           type="email"
@@ -50,7 +60,7 @@ export default function Signup() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full mb-3 px-4 py-2 rounded bg-black border border-gray-700 text-white"
+          className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white"
         />
 
         <input
@@ -59,20 +69,41 @@ export default function Signup() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full mb-3 px-4 py-2 rounded bg-black border border-gray-700 text-white"
+          className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white"
+        />
+
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="w-full mb-4 px-4 py-3 bg-black border border-gray-700 rounded text-white"
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 bg-green-500 text-black rounded font-semibold hover:bg-green-600 disabled:opacity-50"
+          className="w-full bg-green-500 hover:bg-green-600 text-black py-3 rounded font-semibold disabled:opacity-50"
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
+
+        {error && (
+          <p className="text-red-500 mt-4 text-center">{error}</p>
+        )}
+
+        {/* Login redirect */}
+        <p className="mt-6 text-center text-sm text-gray-400">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-green-500 hover:underline font-medium"
+          >
+            Log in
+          </Link>
+        </p>
       </form>
     </div>
   );
 }
-
-
-

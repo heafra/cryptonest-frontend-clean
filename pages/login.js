@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import axiosClient from "../services/axiosClient";
 
 export default function Login() {
@@ -15,13 +16,12 @@ export default function Login() {
       setLoading(true);
       setError("");
 
-      // 🔑 FIX: no /api here
-      await axiosClient.post("/auth/login", {
+      const res = await axiosClient.post("/auth/login", {
         email,
-        password
+        password,
       });
 
-      // cookie is set by backend
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       router.replace("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -39,6 +39,10 @@ export default function Login() {
         <h1 className="text-green-400 text-3xl font-bold text-center mb-2">
           CryptoNest
         </h1>
+
+        <p className="text-gray-400 text-center mb-6">
+          Secure Investment Platform
+        </p>
 
         <input
           type="email"
@@ -61,7 +65,7 @@ export default function Login() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-500 text-black py-3 rounded font-semibold"
+          className="w-full bg-green-500 hover:bg-green-600 text-black py-3 rounded font-semibold disabled:opacity-50"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
@@ -69,7 +73,21 @@ export default function Login() {
         {error && (
           <p className="text-red-500 mt-4 text-center">{error}</p>
         )}
+
+        {/* ✅ FIXED SIGNUP LINK */}
+        <p className="mt-6 text-center text-sm text-gray-400">
+          Don’t have an account?{" "}
+          <Link
+            href="/signup"
+            className="text-green-500 hover:underline font-medium"
+          >
+            Sign up
+          </Link>
+        </p>
       </form>
     </div>
   );
 }
+
+
+
